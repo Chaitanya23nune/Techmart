@@ -68,7 +68,7 @@ router.get('/products', isAdmin, async (req, res) => {
 });
 
 // Add product form
-router.get('/products/add', (req, res) => {
+router.get('/products/add', isAdmin, (req, res) => {
   res.render('admin/product-form', {
     title: 'Add Product',
     product: null,
@@ -79,7 +79,7 @@ router.get('/products/add', (req, res) => {
 // Add product post
 router.post("/products/add", upload.single("image"), async (req, res) => {
   try {
-    const skuvalue = 'TM-' + Date.now();
+    const skuvalue = req.body.sku || ('TM-' + Date.now());
 
     const {
       name,
@@ -147,7 +147,9 @@ router.post('/products/edit/:id', isAdmin, upload.single('image'), async (req, r
   try {
     const { name, description, price, originalPrice, category, brand, stock, rating, isFeatured, isTopItem } = req.body;
     const update = { name, description, price: Number(price), originalPrice: Number(originalPrice || 0), category, brand, stock: Number(stock), rating: Number(rating || 0), isFeatured: !!isFeatured, isTopItem: !!isTopItem };
-    if (req.file) update.imageUrl = 'products/' + req.file.filename;
+    if (req.file) {
+  update.image = "/uploads/" + req.file.filename;
+}
     await Product.findByIdAndUpdate(req.params.id, update);
     res.redirect('/admin/products');
   } catch (err) {
