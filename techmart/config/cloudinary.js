@@ -8,10 +8,10 @@ cloudinary.config({
 });
 
 const storage = new CloudinaryStorage({
-  cloudinary,
+  cloudinary: cloudinary,
   params: {
     folder: "techmart_products",
-    allowed_formats: ["jpg", "jpeg", "png", "webp"]
+    allowed_formats: ["jpg", "png", "jpeg", "webp"]
   }
 });
 
