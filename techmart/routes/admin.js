@@ -9,10 +9,18 @@ const { isAdmin } = require('../middleware/auth');
 
 // Multer config
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'public/images/products/'),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+    destination: function (req, file, cb) {
+        cb(null, "public/uploads/");
+    },
+
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
 });
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
+
+const upload = multer({
+    storage: storage
+});
 
 // Dashboard
 router.get('/dashboard', isAdmin, async (req, res) => {
@@ -69,7 +77,7 @@ router.get('/products/add', (req, res) => {
 });
 
 // Add product post
-router.post('/products/add', async (req, res) => {
+router.post("/products/add", upload.single("image"), async (req, res) => {
   try {
     console.log("BODY:", req.body); // 🔥 DEBUG
     const skuvalue = 'TM-' + Date.now();
@@ -97,7 +105,7 @@ router.post('/products/add', async (req, res) => {
       brand,
       stock: Number(stock),
       rating: Number(rating) || 0,
-      image: imageUrl, // ✅ IMPORTANT
+      image: "/uploads/" + req.file.filename,
       sku:skuvalue,
       isFeatured: isFeatured === 'on',
       isTopItem: isTopItem === 'on'

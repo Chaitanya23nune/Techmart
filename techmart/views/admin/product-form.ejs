@@ -35,13 +35,13 @@
         <div class="row g-3 mb-3">
           <div class="col-12">
             <label class="form-label">Upload Image</label>
-            <input 
-  type="text" 
-  name="imageUrl" 
-  class="form-control"
-  placeholder="products/macbook.jpg"
-  required
->
+            <form action="/admin/products/add" method="POST" enctype="multipart/form-data">
+
+    <input type="file" name="image">
+
+    <button type="submit">Add Product</button>
+
+</form>
             <% if (product && p.imageUrl) { %>
   <div class="mt-2">
     <img
