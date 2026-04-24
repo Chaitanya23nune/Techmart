@@ -5,7 +5,7 @@
   <a href="/cart" class="product-fav" title="Add to Favourites"><i class="bi bi-heart"></i></a>
   <a href="/products/<%= product._id %>" class="product-img-wrap">
     <img
-  src="<%= product.image ? '/' + product.image : '/images/placeholder.png' %>"
+  src="<%= product.image ? product.image : '/images/placeholder.png' %>"
   alt="<%= product.name %>"
   class="product-img"
   onerror="this.src='/images/placeholder.png'">

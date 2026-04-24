@@ -3,23 +3,14 @@ const router = express.Router();
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 const User = require('../models/User');
+
 const multer = require('multer');
-const path = require('path');
+const { storage } = require('../config/cloudinary');
+
 const { isAdmin } = require('../middleware/auth');
 
-// Multer config
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "public/uploads/");
-    },
-
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-});
-
 const upload = multer({
-    storage: storage
+  storage: storage
 });
 
 // Dashboard
@@ -79,7 +70,7 @@ router.get('/products/add', isAdmin, (req, res) => {
 // Add product post
 router.post("/products/add", upload.single("image"), async (req, res) => {
   try {
-    const skuvalue = req.body.sku || ('TM-' + Date.now());
+    const skuvalue = req.body.sku || ("TM-" + Date.now());
 
     const {
       name,
@@ -111,7 +102,7 @@ router.post("/products/add", upload.single("image"), async (req, res) => {
       brand,
       stock: Number(stock),
       rating: Number(rating) || 0,
-      image: "/uploads/" + req.file.filename,
+      image: req.file ? req.file.path : "",
       sku: skuvalue,
       isFeatured: isFeatured === "on",
       isTopItem: isTopItem === "on"
