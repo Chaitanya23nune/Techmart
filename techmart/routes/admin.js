@@ -90,33 +90,32 @@ router.post("/products/add", upload.single("image"), async (req, res) => {
       isTopItem
     } = req.body;
 
-    if (!req.file) {
-      return res.render("admin/product-form", {
-        title: "Add Product",
-        product: null,
-        error: "Please upload a product image"
-      });
-    }
+if (!req.file) {
+  return res.render("admin/product-form", {
+    title: "Add Product",
+    product: null,
+    error: "Please upload a product image"
+  });
+}
 
-    // Upload image to Cloudinary
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "techmart_products"
-    });
+const result = await cloudinary.uploader.upload(req.file.path, {
+  folder: "techmart_products"
+});
 
-    const product = new Product({
-      name,
-      description,
-      price: Number(price),
-      originalPrice: Number(originalPrice) || 0,
-      category,
-      brand,
-      stock: Number(stock),
-      rating: Number(rating) || 0,
-      image: result.secure_url,
-      sku: skuvalue,
-      isFeatured: isFeatured === "on",
-      isTopItem: isTopItem === "on"
-    });
+const product = new Product({
+  name,
+  description,
+  price: Number(price),
+  originalPrice: Number(originalPrice) || 0,
+  category,
+  brand,
+  stock: Number(stock),
+  rating: Number(rating) || 0,
+  image: result.secure_url,
+  sku: skuvalue,
+  isFeatured: isFeatured === "on",
+  isTopItem: isTopItem === "on"
+});
 
     await product.save();
 
