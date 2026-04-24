@@ -79,8 +79,8 @@ router.get('/products/add', (req, res) => {
 // Add product post
 router.post("/products/add", upload.single("image"), async (req, res) => {
   try {
-    console.log("BODY:", req.body); // 🔥 DEBUG
     const skuvalue = 'TM-' + Date.now();
+
     const {
       name,
       description,
@@ -90,11 +90,17 @@ router.post("/products/add", upload.single("image"), async (req, res) => {
       brand,
       stock,
       rating,
-      imageUrl,
-      sku,
       isFeatured,
       isTopItem
     } = req.body;
+
+    if (!req.file) {
+      return res.render("admin/product-form", {
+        title: "Add Product",
+        product: null,
+        error: "Please upload a product image"
+      });
+    }
 
     const product = new Product({
       name,
@@ -106,26 +112,25 @@ router.post("/products/add", upload.single("image"), async (req, res) => {
       stock: Number(stock),
       rating: Number(rating) || 0,
       image: "/uploads/" + req.file.filename,
-      sku:skuvalue,
-      isFeatured: isFeatured === 'on',
-      isTopItem: isTopItem === 'on'
+      sku: skuvalue,
+      isFeatured: isFeatured === "on",
+      isTopItem: isTopItem === "on"
     });
 
     await product.save();
 
-    res.redirect('/admin/products');
+    res.redirect("/admin/products");
 
   } catch (err) {
-    console.log("ERROR:", err.message); // 🔥 SHOW REAL ERROR
+    console.log(err);
 
-    res.render('admin/product-form', {
-      title: 'Add Product',
+    res.render("admin/product-form", {
+      title: "Add Product",
       product: null,
-      error: err.message // 🔥 SHOW REAL ERROR IN UI
+      error: err.message
     });
   }
 });
-
 // Edit product form
 router.get('/products/edit/:id', async (req, res) => {
   const product = await Product.findById(req.params.id);
