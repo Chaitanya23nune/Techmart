@@ -3,16 +3,21 @@ const router = express.Router();
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 const User = require('../models/User');
+const multer = require("multer");
+const path = require("path");
 
-const multer = require('multer');
-const { storage } = require('../config/cloudinary');
+const cloudinary = require("../config/cloudinary");
 
-const { isAdmin } = require('../middleware/auth');
-
-const upload = multer({
-  storage: storage
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
 });
 
+const upload = multer({ storage });
 // Dashboard
 router.get('/dashboard', isAdmin, async (req, res) => {
   try {
@@ -93,6 +98,11 @@ router.post("/products/add", upload.single("image"), async (req, res) => {
       });
     }
 
+    // Upload image to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "techmart_products"
+    });
+
     const product = new Product({
       name,
       description,
@@ -102,7 +112,7 @@ router.post("/products/add", upload.single("image"), async (req, res) => {
       brand,
       stock: Number(stock),
       rating: Number(rating) || 0,
-      image: req.file ? req.file.path : "",
+      image: result.secure_url,
       sku: skuvalue,
       isFeatured: isFeatured === "on",
       isTopItem: isTopItem === "on"
@@ -139,7 +149,11 @@ router.post('/products/edit/:id', isAdmin, upload.single('image'), async (req, r
     const { name, description, price, originalPrice, category, brand, stock, rating, isFeatured, isTopItem } = req.body;
     const update = { name, description, price: Number(price), originalPrice: Number(originalPrice || 0), category, brand, stock: Number(stock), rating: Number(rating || 0), isFeatured: !!isFeatured, isTopItem: !!isTopItem };
     if (req.file) {
-  update.image = "/uploads/" + req.file.filename;
+  const result = await cloudinary.uploader.upload(req.file.path, {
+  folder: "techmart_products"
+});
+
+update.image = result.secure_url;
 }
     await Product.findByIdAndUpdate(req.params.id, update);
     res.redirect('/admin/products');
