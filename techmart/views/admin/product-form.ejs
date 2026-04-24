@@ -34,21 +34,30 @@
           <div class="col-md-4"><label class="form-label">Rating (0-5)</label><input type="number" name="rating" class="form-control" step="0.1" min="0" max="5" value="<%= product ? product.rating : '0' %>"></div>
         </div>
         <div class="form-section-title">Product Image</div>
-        <div class="row g-3 mb-3">
-          <div class="col-12">
-            <label class="form-label">Upload Image</label>
-            <input type="file" name="image" class="form-control">
-            <% if (product && product.image) { %>
-  <div class="mt-2">
-    <img
-src="<%= product.image ? product.image : '/images/placeholder.png' %>" id="imgPreview"
-      style="max-height:120px;border-radius:8px;object-fit:contain;background:#f8f7ff;padding:8px">
+
+<div class="row g-3 mb-3">
+  <div class="col-12">
+    <label class="form-label">Upload Image</label>
+
+    <input type="file" name="image" class="form-control">
+
+    <% if (product && product.image) { %>
+      <div class="mt-2">
+        <img
+          src="<%= product.image %>"
+          id="imgPreview"
+          style="max-height:120px;border-radius:8px;object-fit:contain;background:#f8f7ff;padding:8px"
+        >
+      </div>
+    <% } else { %>
+      <img
+        id="imgPreview"
+        style="display:none;max-height:120px;margin-top:8px;border-radius:8px"
+      >
+    <% } %>
+
   </div>
-<% } else { %>
-  <img id="imgPreview" style="display:none;max-height:120px;margin-top:8px;border-radius:8px">
-<% } %>
-          </div>
-        </div>
+</div>
         <div class="col-md-6">
   <label class="form-label">SKU *</label>
   <input type="text" name="sku" class="form-control" required>
