@@ -5,8 +5,10 @@
       <% if (typeof error !== 'undefined' && error) { %>
   <div class="alert alert-danger rounded-3 mb-3"><%= error %></div>
 <% } %>
-      <form method="POST" action="<%= product ? '/admin/products/edit/' + product._id : '/admin/products/add' %>">
-        <div class="form-section-title">Basic Information</div>
+<form method="POST"
+      action="<%= product ? '/admin/products/edit/' + product._id : '/admin/products/add' %>"
+      enctype="multipart/form-data">
+              <div class="form-section-title">Basic Information</div>
         <div class="row g-3 mb-3">
           <div class="col-12"><label class="form-label">Product Name *</label><input type="text" name="name" class="form-control" value="<%= product ? product.name : '' %>" required></div>
           <div class="col-12"><label class="form-label">Description *</label><textarea name="description" class="form-control" rows="4" required><%= product ? product.description : '' %></textarea></div>
@@ -35,18 +37,11 @@
         <div class="row g-3 mb-3">
           <div class="col-12">
             <label class="form-label">Upload Image</label>
-            <form action="/admin/products/add" method="POST" enctype="multipart/form-data">
-
-    <input type="file" name="image">
-
-    <button type="submit">Add Product</button>
-
-</form>
-            <% if (product && p.imageUrl) { %>
+            <input type="file" name="image" class="form-control">
+            <% if (product && product.image) { %>
   <div class="mt-2">
     <img
-  src="<%= p.image ? '/images/' + p.image : '/images/placeholder.png' %>"
- id="imgPreview"
+src="<%= product.image ? product.image : '/images/placeholder.png' %>" id="imgPreview"
       style="max-height:120px;border-radius:8px;object-fit:contain;background:#f8f7ff;padding:8px">
   </div>
 <% } else { %>
