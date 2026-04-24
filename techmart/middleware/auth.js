@@ -5,10 +5,12 @@ function isAuth(req, res, next) {
 }
 
 function isAdmin(req, res, next) {
-  if (req.session.isAdmin) return next();
-  res.redirect('/auth/admin-login');
-}
+  if (req.session && req.session.user && req.session.user.role === 'admin') {
+    return next();
+  }
 
+  return res.redirect('/auth/admin-login');
+}
 function isGuest(req, res, next) {
   if (req.session.user) return res.redirect('/');
   next();
