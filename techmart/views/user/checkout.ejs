@@ -1,0 +1,61 @@
+<%- include('../partials/header') %>
+<div class="container-fluid px-4 py-3">
+  <h4 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:20px">Checkout</h4>
+  <div class="row g-3">
+    <div class="col-lg-7">
+      <div class="checkout-card mb-3">
+        <div class="checkout-step"><div class="step-num">1</div><div class="step-label">Delivery Address</div></div>
+        <form id="checkoutForm" action="/orders/place" method="POST">
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label">Full Name</label><input type="text" name="name" class="form-control" value="<%= user ? user.name : '' %>" required></div>
+            <div class="col-md-6"><label class="form-label">Phone</label><input type="tel" name="phone" class="form-control" placeholder="+1 234 567 890" required></div>
+            <div class="col-12"><label class="form-label">Street Address</label><input type="text" name="street" class="form-control" placeholder="123 Main Street" required></div>
+            <div class="col-md-4"><label class="form-label">City</label><input type="text" name="city" class="form-control" required></div>
+            <div class="col-md-4"><label class="form-label">State</label><input type="text" name="state" class="form-control" required></div>
+            <div class="col-md-4"><label class="form-label">ZIP Code</label><input type="text" name="zip" class="form-control" required></div>
+          </div>
+          <hr class="my-4">
+          <div class="checkout-step"><div class="step-num">2</div><div class="step-label">Delivery Type</div></div>
+          <div class="delivery-btns mb-4">
+            <button type="button" class="delivery-btn active" data-type="standard"><i class="bi bi-truck me-1"></i>Standard</button>
+            <button type="button" class="delivery-btn" data-type="pickup"><i class="bi bi-shop me-1"></i>Pick Up</button>
+          </div>
+          <input type="hidden" id="deliveryType" name="deliveryType" value="standard">
+          <hr class="my-4">
+          <div class="checkout-step"><div class="step-num">3</div><div class="step-label">Payment Method</div></div>
+          <div class="payment-option selected mb-2">
+            <span class="payment-icon">💳</span>
+            <div><div style="font-weight:600;font-size:0.9rem">Demo Payment</div><div style="font-size:0.78rem;color:var(--text-muted)">Test checkout (no real payment)</div></div>
+            <input type="radio" name="paymentMethod" value="demo" checked style="margin-left:auto">
+          </div>
+          <div class="payment-option mb-3">
+            <span class="payment-icon">💵</span>
+            <div><div style="font-weight:600;font-size:0.9rem">Cash on Delivery</div><div style="font-size:0.78rem;color:var(--text-muted)">Pay when you receive</div></div>
+            <input type="radio" name="paymentMethod" value="cod" style="margin-left:auto">
+          </div>
+          <button type="submit" class="checkout-btn">Place Order <i class="bi bi-check-circle ms-2"></i></button>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="order-summary-card">
+        <h6 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px">Order Summary</h6>
+        <% cart.forEach(item => { %>
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <img 
+  src="<%= item.image ? '/images/' + item.image : '/images/placeholder.png' %>"
+  style="width:48px;height:48px;object-fit:contain;background:#f8f7ff;border-radius:8px;padding:4px"
+>
+          <div class="flex-grow-1"><div style="font-size:0.85rem;font-weight:600"><%= item.name.substring(0,30) %>...</div><div style="font-size:0.78rem;color:var(--text-muted)">x<%= item.quantity %></div></div>
+          <div style="font-weight:700;font-size:0.9rem">$<%= (item.price*item.quantity).toFixed(2) %></div>
+        </div>
+        <% }) %>
+        <hr>
+        <div class="summary-row"><span>Subtotal</span><span>$<%= total.toFixed(2) %></span></div>
+        <div class="summary-row"><span>Shipping</span><span style="color:var(--accent-green)">Free</span></div>
+        <div class="summary-row summary-total"><span>Total</span><span style="color:var(--primary);font-size:1.2rem">$<%= total.toFixed(2) %></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

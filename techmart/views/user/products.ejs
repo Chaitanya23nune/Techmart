@@ -1,0 +1,114 @@
+<%- include('../partials/header') %>
+<div class="container-fluid px-4 py-3">
+  <nav aria-label="breadcrumb" class="breadcrumb-wrap"><ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active"><%= filters.category || 'All Products' %></li>
+  </ol></nav>
+  <div class="row g-3">
+    <div class="col-lg-3">
+      <div class="filter-card">
+        <form method="GET" action="/products">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="filter-title">Filters</div>
+            <a href="/products" class="filter-reset">Reset All</a>
+          </div>
+          <div class="filter-section">
+            <div class="filter-label">Price Range</div>
+            <p class="text-muted" style="font-size:0.78rem">Avg price $300</p>
+            <div class="range-display">
+              <span class="range-pill">$0</span>
+              <span class="range-pill" id="rangeMax">$<%= filters.maxPrice || 2000 %></span>
+            </div>
+            <input type="range" id="priceRange" class="price-range-input" min="0" max="2000" value="<%= filters.maxPrice || 2000 %>">
+            <input type="hidden" name="maxPrice" id="maxPriceInput" value="<%= filters.maxPrice || 2000 %>">
+            <% if (filters.category) { %><input type="hidden" name="category" value="<%= filters.category %>"><% } %>
+            <% if (filters.search) { %><input type="hidden" name="search" value="<%= filters.search %>"><% } %>
+          </div>
+          <div class="filter-section">
+            <div class="filter-label">Star Rating</div>
+            <% for(let r=4;r>=1;r--) { %>
+            <div class="brand-check"><label>
+              <input type="radio" name="rating" value="<%= r %>" <%= filters.rating == r ? 'checked' : '' %>>
+              <span style="color:var(--accent)"><%= '★'.repeat(r) %><%= '☆'.repeat(5-r) %></span>
+              <span style="font-size:0.78rem;color:var(--text-muted)"><%= r %>+ stars</span>
+            </label></div>
+            <% } %>
+          </div>
+          <div class="filter-section">
+            <div class="filter-label">Brand</div>
+            <% brands.slice(0,8).forEach(b => { %>
+            <div class="brand-check"><label>
+              <input type="checkbox" name="brand" value="<%= b %>" <%= filters.brand === b ? 'checked' : '' %> onchange="this.form.submit()">
+              <%= b %>
+            </label></div>
+            <% }) %>
+          </div>
+          <div class="filter-section">
+            <div class="filter-label">Delivery</div>
+            <div class="delivery-btns">
+              <button type="button" class="delivery-btn active" data-type="standard">Standard</button>
+              <button type="button" class="delivery-btn" data-type="pickup">Pick Up</button>
+            </div>
+            <input type="hidden" id="deliveryType" name="delivery" value="standard">
+          </div>
+          <button type="submit" class="checkout-btn mt-2" style="font-size:0.88rem;padding:10px">Apply Filters</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+        <h5 class="mb-0" style="font-family:'Syne',sans-serif;font-weight:700">
+          <%= filters.category || 'All Products' %>
+          <span class="text-muted fw-normal" style="font-size:0.85rem;font-family:'DM Sans',sans-serif">(<%= products.length %>)</span>
+        </h5>
+        <form method="GET" action="/products" class="d-flex gap-2">
+          <% if (filters.category) { %><input type="hidden" name="category" value="<%= filters.category %>"><% } %>
+          <% if (filters.search) { %><input type="hidden" name="search" value="<%= filters.search %>"><% } %>
+          <select name="sort" class="form-select form-select-sm" style="width:170px;border-radius:50px" onchange="this.form.submit()">
+            <option value="">Newest First</option>
+            <option value="price_asc" <%= filters.sort==='price_asc'?'selected':'' %>>Price: Low to High</option>
+            <option value="price_desc" <%= filters.sort==='price_desc'?'selected':'' %>>Price: High to Low</option>
+            <option value="rating" <%= filters.sort==='rating'?'selected':'' %>>Top Rated</option>
+          </select>
+        </form>
+      </div>
+      <% if (products.length === 0) { %>
+      <div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No products found</div><p>Try different filters or <a href="/products" style="color:var(--primary)">clear all</a></p></div>
+      <% } else { %>
+      <div class="row g-3">
+        <% products.forEach(p => { %>
+        <div class="col-6 col-md-4 col-xl-3">
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <% if (p.isTopItem) { %><span class="product-badge top">Top Item</span><% } %>
+              <button class="wish-btn"><i class="bi bi-heart"></i></button>
+              <a href="/products/<%= p._id %>">
+            <img 
+  src="<%= p.image ? '/images/' + p.image : '/images/placeholder.png' %>"
+>
+            </div>
+            <div class="product-info">
+              <a href="/products/<%= p._id %>" style="text-decoration:none"><div class="product-name"><%= p.name %></div></a>
+              <div class="product-rating">
+                <span class="stars"><% for(let i=1;i<=5;i++) { %><i class="bi bi-star<%= i<=Math.round(p.rating)?'-fill':'' %>"></i><% } %></span>
+                <span class="rating-count">(<%= p.reviewCount %>)</span>
+              </div>
+              <div class="product-price-row">
+                <span class="product-price"><i class="bi bi-bag price-icon"></i>$<%= p.price.toFixed(2) %></span>
+                <% if (p.originalPrice > p.price) { %><span class="product-original">$<%= p.originalPrice.toFixed(2) %></span><% } %>
+              </div>
+              <button class="add-cart-btn" data-add-cart="<%= p._id %>"><i class="bi bi-bag-plus me-1"></i>Add to Cart</button>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<script>
+const ri=document.getElementById('priceRange'),rm=document.getElementById('rangeMax'),mi=document.getElementById('maxPriceInput');
+if(ri){ri.addEventListener('input',function(){rm.textContent='$'+this.value;mi.value=this.value;});}
+</script>
+<%- include('../partials/footer') %>

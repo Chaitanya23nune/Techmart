@@ -1,0 +1,8 @@
+node_modules/
+.env
+public/images/products/*.jpg
+public/images/products/*.png
+public/images/products/*.jpeg
+public/images/products/*.webp
+*.log
+.DS_Store

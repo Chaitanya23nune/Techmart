@@ -1,0 +1,36 @@
+<%- include('../partials/admin-header') %>
+<div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+  <form method="GET" action="/admin/orders" class="d-flex gap-2">
+    <select name="status" class="form-select form-select-sm" style="width:160px" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      <% ['Placed','Confirmed','Shipped','Delivered','Cancelled'].forEach(s => { %>
+      <option value="<%= s %>" <%= filters.status===s?'selected':'' %>><%= s %></option>
+      <% }) %>
+    </select>
+  </form>
+</div>
+<div class="admin-table-card">
+  <div class="admin-table-header">
+    <div class="admin-table-title">Orders (<%= orders.length %>)</div>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        <% if(orders.length===0){%><tr><td colspan="7" class="text-center py-4" style="color:var(--text-muted)">No orders found</td></tr><%}%>
+        <% orders.forEach(o => { %>
+        <tr>
+          <td><strong style="color:var(--primary)">#<%= o.orderId %></strong></td>
+          <td><% if(o.user){%><%= o.user.name %><br><span style="font-size:0.75rem;color:var(--text-muted)"><%= o.user.email %></span><%}else{%>-<%}%></td>
+          <td style="font-size:0.82rem;color:var(--text-muted)"><%= new Date(o.createdAt).toLocaleDateString() %></td>
+          <td><%= o.items.length %></td>
+          <td><strong>$<%= Number(o.totalAmount || 0).toFixed(2) %></strong></td>
+          <td><span class="status-badge status-<%= o.status.toLowerCase() %>"><%= o.status %></span></td>
+          <td><a href="/admin/orders/<%= o._id %>" class="btn-action btn-view"><i class="bi bi-eye"></i></a></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/admin-footer') %>

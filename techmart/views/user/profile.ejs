@@ -1,0 +1,62 @@
+<%- include('../partials/header') %>
+<div class="container-fluid px-4 py-3">
+  <div class="row g-3">
+    <div class="col-lg-4">
+      <div class="profile-card mb-3">
+        <div class="profile-header">
+          <div class="profile-avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+          <h5 style="margin:0;font-family:'Syne',sans-serif"><%= user.name %></h5>
+          <div style="opacity:0.8;font-size:0.85rem"><%= user.email %></div>
+        </div>
+        <div class="p-4">
+          <form method="POST" action="/user/profile">
+            <div class="mb-3"><label class="form-label">Full Name</label><input type="text" name="name" class="form-control" value="<%= user.name %>" required></div>
+            <div class="mb-3"><label class="form-label">Phone</label><input type="tel" name="phone" class="form-control" value="<%= user.phone || '' %>"></div>
+            <div class="mb-3"><label class="form-label">Street</label><input type="text" name="street" class="form-control" value="<%= user.address && user.address.street || '' %>"></div>
+            <div class="row g-2 mb-3">
+              <div class="col-6"><label class="form-label">City</label><input type="text" name="city" class="form-control" value="<%= user.address && user.address.city || '' %>"></div>
+              <div class="col-6"><label class="form-label">State</label><input type="text" name="state" class="form-control" value="<%= user.address && user.address.state || '' %>"></div>
+            </div>
+            <div class="mb-3"><label class="form-label">ZIP</label><input type="text" name="zip" class="form-control" value="<%= user.address && user.address.zip || '' %>"></div>
+            <button type="submit" class="checkout-btn" style="font-size:0.9rem;padding:11px">Save Changes</button>
+          </form>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="p-4">
+          <h6 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px">Change Password</h6>
+          <form method="POST" action="/user/change-password">
+            <div class="mb-3"><label class="form-label">Current Password</label><input type="password" name="currentPassword" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">New Password</label><input type="password" name="newPassword" class="form-control" minlength="6" required></div>
+            <button type="submit" class="checkout-btn" style="background:#1a1a2e;font-size:0.9rem;padding:11px">Update Password</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <h5 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px">Recent Orders</h5>
+      <% if (orders.length === 0) { %>
+      <div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No orders yet</div><a href="/products" class="tm-btn-primary mt-3 d-inline-block">Shop Now</a></div>
+      <% } else { %>
+      <div class="admin-table-card">
+        <table class="table">
+          <thead><tr><th>Order ID</th><th>Date</th><th>Total</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <% orders.forEach(o => { %>
+            <tr>
+              <td><strong style="color:var(--primary)">#<%= o.orderId %></strong></td>
+              <td style="font-size:0.85rem;color:var(--text-muted)"><%= new Date(o.createdAt).toLocaleDateString() %></td>
+              <td><strong>$<%= o.totalAmount.toFixed(2) %></strong></td>
+              <td><span class="status-badge status-<%= o.status.toLowerCase() %>"><%= o.status %></span></td>
+              <td><a href="/orders/<%= o._id %>" class="btn-action btn-view"><i class="bi bi-eye"></i></a></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <div class="text-end mt-2"><a href="/orders" class="section-link">View All Orders <i class="bi bi-arrow-right"></i></a></div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

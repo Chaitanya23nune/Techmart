@@ -1,0 +1,181 @@
+<%- include('partials/header') %>
+
+<!-- Mobile Search -->
+<div class="mobile-search-bar d-md-none">
+  <form action="/products" method="GET" class="mobile-search-form">
+    <i class="bi bi-search" style="color:var(--text-muted)"></i>
+    <input type="text" name="search" placeholder="Search products...">
+    <button type="submit" style="background:none;border:none;color:var(--primary);font-weight:700;font-size:0.85rem">Go</button>
+  </form>
+</div>
+
+<div class="container-fluid px-4 py-2">
+
+  <!-- Hero Banner -->
+  <div class="tm-hero">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <div class="hero-tag"><i class="bi bi-lightning-charge-fill me-1"></i>New Arrivals 2024</div>
+        <h1 class="hero-title">Next-Gen Tech<br>at Your Fingertips</h1>
+        <p class="hero-sub">Discover premium electronics — mobiles, laptops, TVs &amp; more.<br class="d-none d-md-block">Best prices, fast delivery guaranteed.</p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="/products" class="hero-btn"><i class="bi bi-grid me-2"></i>Shop All Products</a>
+          <a href="/products?category=Gaming" class="hero-btn" style="background:rgba(255,255,255,0.15);color:#fff;backdrop-filter:blur(6px)"><i class="bi bi-controller me-2"></i>Gaming</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="hero-stat-val">500+</div><div class="hero-stat-label">Products</div></div>
+          <div style="width:1px;background:rgba(255,255,255,0.2)"></div>
+          <div><div class="hero-stat-val">10K+</div><div class="hero-stat-label">Happy Customers</div></div>
+          <div style="width:1px;background:rgba(255,255,255,0.2)"></div>
+          <div><div class="hero-stat-val">Free</div><div class="hero-stat-label">Shipping</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categories -->
+  <div class="section-header d-flex align-items-center justify-content-between mt-4">
+    <h2 class="section-title">Shop by Category</h2>
+    <a href="/products" class="section-link">View All <i class="bi bi-arrow-right"></i></a>
+  </div>
+  <div class="row g-3 mb-4">
+    <% const catData = [
+      {name:'Mobile', icon:'📱', count:'120+ items'},
+      {name:'Laptop', icon:'💻', count:'85+ items'},
+      {name:'TV',     icon:'📺', count:'45+ items'},
+      {name:'Audio',  icon:'🎧', count:'90+ items'},
+      {name:'Gaming', icon:'🎮', count:'110+ items'},
+      {name:'Accessories', icon:'🔌', count:'200+ items'}
+    ]; %>
+    <% catData.forEach(cat => { %>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="/products?category=<%= cat.name %>" class="cat-card">
+        <div class="cat-icon"><%= cat.icon %></div>
+        <div class="cat-name"><%= cat.name %></div>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px"><%= cat.count %></div>
+      </a>
+    </div>
+    <% }) %>
+  </div>
+
+  <!-- Featured Products -->
+  <div class="section-header d-flex align-items-center justify-content-between">
+    <h2 class="section-title">Featured Products</h2>
+    <a href="/products" class="section-link">See All <i class="bi bi-arrow-right"></i></a>
+  </div>
+
+  <% if (featured.length === 0) { %>
+  <div class="empty-state">
+    <div class="empty-icon">📦</div>
+    <div class="empty-title">Store is setting up...</div>
+    <p style="color:var(--text-muted)">Products are being loaded. Try refreshing in a moment.</p>
+    <% if (isAdmin) { %>
+      <div class="d-flex gap-2 justify-content-center mt-3">
+        <a href="/admin/products/add" class="tm-btn-primary">Add Products</a>
+        <a href="/admin/products/import-api" class="tm-btn-outline">Import from API</a>
+      </div>
+    <% } %>
+  </div>
+  <% } else { %>
+  <div class="row g-3 mb-4">
+    <% featured.forEach(p => { %>
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <% if (p.isTopItem) { %><span class="product-badge top">⭐ Top Item</span><% } %>
+          <% if (p.originalPrice > p.price) { %><span class="product-badge sale" style="left:auto;right:12px;top:12px">-<%= Math.round((1-p.price/p.originalPrice)*100) %>%</span><% } %>
+          <button class="wish-btn"><i class="bi bi-heart"></i></button>
+          <a href="/products/<%= p._id %>">
+            <img
+  src="<%= p.image ? '/images/' + p.image : '/images/placeholder.png' %>"
+alt="<%= p.name %>" loading="lazy" onerror="this.src='/images/placeholder.svg'">
+          </a>
+        </div>
+        <div class="product-info">
+          <a href="/products/<%= p._id %>" style="text-decoration:none">
+            <div class="product-name"><%= p.name %></div>
+          </a>
+          <div class="product-rating">
+            <span class="stars">
+              <% for(let i=1;i<=5;i++){%><i class="bi bi-star<%= i<=Math.round(p.rating)?'-fill':'' %>"></i><%}%>
+            </span>
+            <span class="rating-count"><%= p.rating.toFixed(1) %> (<%= p.reviewCount %>)</span>
+          </div>
+          <div class="product-price-row">
+            <span class="product-price"><i class="bi bi-bag price-icon"></i>$<%= p.price.toFixed(2) %></span>
+            <% if (p.originalPrice > p.price) { %><span class="product-original">$<%= p.originalPrice.toFixed(2) %></span><% } %>
+          </div>
+          <button class="add-cart-btn" data-add-cart="<%= p._id %>">
+            <i class="bi bi-bag-plus me-1"></i>Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } %>
+
+  <!-- Top Items Section -->
+  <% if (topItems.length > 0) { %>
+  <div class="section-header d-flex align-items-center justify-content-between mt-2">
+    <h2 class="section-title">🏆 Best Sellers</h2>
+    <a href="/products?sort=rating" class="section-link">More <i class="bi bi-arrow-right"></i></a>
+  </div>
+  <div class="row g-3 mb-4">
+    <% topItems.forEach((p, idx) => { %>
+    <div class="col-6 col-md-3">
+      <div class="product-card" style="border-color:var(--accent)">
+        <div style="position:absolute;top:12px;left:12px;background:var(--accent);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;z-index:2"><%= idx+1 %></div>
+        <div class="product-img-wrap">
+          <button class="wish-btn"><i class="bi bi-heart"></i></button>
+          <a href="/products/<%= p._id %>">
+            <img
+  src="<%= p.image ? '/images/' + p.image : '/images/placeholder.png' %>"
+>
+          </a>
+        </div>
+        <div class="product-info">
+          <a href="/products/<%= p._id %>" style="text-decoration:none"><div class="product-name"><%= p.name %></div></a>
+          <div class="product-rating">
+            <span class="stars"><% for(let i=1;i<=5;i++){%><i class="bi bi-star<%= i<=Math.round(p.rating)?'-fill':'' %>"></i><%}%></span>
+            <span class="rating-count"><%= p.rating.toFixed(1) %></span>
+          </div>
+          <div class="product-price-row">
+            <span class="product-price">$<%= p.price.toFixed(2) %></span>
+            <% if (p.originalPrice > p.price) { %><span class="product-original">$<%= p.originalPrice.toFixed(2) %></span><% } %>
+          </div>
+          <button class="add-cart-btn" data-add-cart="<%= p._id %>">
+            <i class="bi bi-bag-plus me-1"></i>Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } %>
+
+  <!-- Promo Banner -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);border-radius:var(--radius);padding:28px;color:#fff;position:relative;overflow:hidden;min-height:140px;display:flex;flex-direction:column;justify-content:center">
+        <div style="position:absolute;top:-20px;right:-20px;font-size:6rem;opacity:0.15">🎮</div>
+        <div style="font-size:0.8rem;font-weight:600;opacity:0.7;margin-bottom:4px">Limited Time</div>
+        <div style="font-size:1.3rem;font-weight:800;font-family:'Syne',sans-serif;margin-bottom:8px">Gaming Week Sale</div>
+        <div style="font-size:0.85rem;opacity:0.8;margin-bottom:16px">Up to 30% off on all gaming products</div>
+        <a href="/products?category=Gaming" style="background:#fff;color:#1a1a2e;border-radius:50px;padding:7px 20px;font-weight:700;font-size:0.85rem;text-decoration:none;width:fit-content">Shop Gaming</a>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div style="background:linear-gradient(135deg,#064e3b,#065f46);border-radius:var(--radius);padding:28px;color:#fff;position:relative;overflow:hidden;min-height:140px;display:flex;flex-direction:column;justify-content:center">
+        <div style="position:absolute;top:-20px;right:-20px;font-size:6rem;opacity:0.15">🎧</div>
+        <div style="font-size:0.8rem;font-weight:600;opacity:0.7;margin-bottom:4px">New Arrival</div>
+        <div style="font-size:1.3rem;font-weight:800;font-family:'Syne',sans-serif;margin-bottom:8px">Premium Audio</div>
+        <div style="font-size:0.85rem;opacity:0.8;margin-bottom:16px">Noise cancelling headphones from $249</div>
+        <a href="/products?category=Audio" style="background:#fff;color:#064e3b;border-radius:50px;padding:7px 20px;font-weight:700;font-size:0.85rem;text-decoration:none;width:fit-content">Shop Audio</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<%- include('partials/footer') %>

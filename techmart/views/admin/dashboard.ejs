@@ -1,0 +1,253 @@
+
+<%- include('../partials/admin-header') %>
+
+<!-- SAFE DEFAULTS -->
+<%
+totalProducts = totalProducts || 0;
+totalOrders = totalOrders || 0;
+totalUsers = totalUsers || 0;
+revenue = Number(revenue || 0);
+statusCount = statusCount || {};
+lowStock = lowStock || [];
+recentOrders = recentOrders || [];
+%>
+
+<!-- Quick Actions -->
+<div class="row g-2 mb-4">
+  <div class="col-6 col-md-3">
+    <a href="/admin/products/add" class="quick-action">
+      <i class="bi bi-plus-circle-fill" style="color:var(--primary)"></i>
+      <span>Add Product</span>
+    </a>
+  </div>
+  <div class="col-6 col-md-3">
+    <a href="/admin/products/import-api" class="quick-action">
+      <i class="bi bi-cloud-arrow-down-fill" style="color:#1d4ed8"></i>
+      <span>Import API</span>
+    </a>
+  </div>
+  <div class="col-6 col-md-3">
+    <a href="/admin/orders" class="quick-action">
+      <i class="bi bi-receipt-cutoff" style="color:#d97706"></i>
+      <span>View Orders</span>
+    </a>
+  </div>
+  <div class="col-6 col-md-3">
+    <a href="/" target="_blank" class="quick-action">
+      <i class="bi bi-shop" style="color:#16a34a"></i>
+      <span>View Store</span>
+    </a>
+  </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon purple"><i class="bi bi-box-seam-fill"></i></div>
+      <div>
+        <div class="stat-value"><%= totalProducts %></div>
+        <div class="stat-label">Total Products</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="bi bi-receipt-cutoff"></i></div>
+      <div>
+        <div class="stat-value"><%= totalOrders %></div>
+        <div class="stat-label">Total Orders</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="bi bi-currency-dollar"></i></div>
+      <div>
+        <div class="stat-value">$<%= revenue.toFixed(0) %></div>
+        <div class="stat-label">Total Revenue</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="stat-card">
+      <div class="stat-icon amber"><i class="bi bi-people-fill"></i></div>
+      <div>
+        <div class="stat-value"><%= totalUsers %></div>
+        <div class="stat-label">Registered Users</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-3 mb-4">
+  <div class="col-lg-7">
+    <div class="chart-card">
+      <div class="chart-title">
+        <i class="bi bi-bar-chart-fill me-2" style="color:var(--primary)"></i>
+        Order Status Overview
+      </div>
+
+      <%
+      const total = Object.values(statusCount).reduce((a,b)=>a+b,0) || 1;
+      %>
+
+      <!-- Status Bar -->
+      <div class="status-bar mb-4" style="height:16px;border-radius:50px">
+        <% Object.entries(statusCount).forEach(([status,count]) => { 
+             const cls = 'status-' + status.toLowerCase();
+             const width = ((count || 0)/total*100).toFixed(1);
+        %>
+
+        <div class="status-seg <%= cls %>" data-width="<%= width %>"></div>
+
+        <% }) %>
+      </div>
+
+      <!-- Status Rows -->
+      <% Object.entries(statusCount).forEach(([status, count]) => { 
+           const cls = 'status-' + status.toLowerCase();
+           const percent = ((count || 0)/total*100).toFixed(0);
+      %>
+
+      <div class="d-flex align-items-center gap-3 mb-2">
+
+        <div class="status-dot <%= cls %>"></div>
+
+        <div style="flex:1;font-size:0.85rem;font-weight:600">
+          <%= status %>
+        </div>
+
+        <div style="font-size:0.85rem;color:var(--text-muted)">
+          <%= count || 0 %> orders
+        </div>
+
+        <div class="<%= cls %>" style="font-size:0.82rem;font-weight:700">
+          <%= percent %>%
+        </div>
+
+      </div>
+
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Low Stock -->
+  <div class="col-lg-5">
+    <div class="chart-card h-100">
+      <div class="chart-title">
+        <i class="bi bi-exclamation-triangle-fill me-2" style="color:#d97706"></i>
+        Low Stock Alert
+      </div>
+
+      <% if (lowStock.length === 0) { %>
+      <div class="text-center py-4">
+        <div style="font-size:2rem;margin-bottom:8px">✅</div>
+        <div style="font-size:0.88rem;color:var(--text-muted)">
+          All products well-stocked
+        </div>
+      </div>
+      <% } else { %>
+
+      <% lowStock.forEach(p => { %>
+      <div class="d-flex align-items-center gap-2 mb-3 pb-3"
+           style="border-bottom:1px solid var(--border)">
+        <img 
+  src="<%= p.image ? '/images/' + p.image : '/images/placeholder.png' %>"
+             style="width:38px;height:38px;object-fit:contain;background:#f8f7ff;border-radius:8px;padding:3px">
+
+        <div class="flex-grow-1" style="min-width:0">
+          <div style="font-size:0.83rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+            <%= p.name %>
+          </div>
+          <div style="font-size:0.75rem;color:var(--text-muted)">
+            <%= p.category %>
+          </div>
+        </div>
+
+        <span class="stock-low"><%= p.stock || 0 %> left</span>
+      </div>
+      <% }) %>
+
+      <a href="/admin/products" class="section-link" style="font-size:0.82rem">
+        View All Products →
+      </a>
+
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="admin-table-card">
+  <div class="admin-table-header">
+    <div class="admin-table-title">
+      <i class="bi bi-clock-history me-2" style="color:var(--primary)"></i>
+      Recent Orders
+    </div>
+
+    <a href="/admin/orders" style="color:var(--primary);font-size:0.85rem;font-weight:600;text-decoration:none">
+      View All <i class="bi bi-arrow-right"></i>
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Date</th>
+          <th>Items</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% if(recentOrders.length===0){ %>
+        <tr><td colspan="7">No orders yet</td></tr>
+        <% } %>
+
+        <% recentOrders.forEach(o => { %>
+        <tr>
+          <td><strong>#<%= o.orderId %></strong></td>
+
+          <td>
+            <% if(o.user){ %>
+              <div><%= o.user.name %></div>
+              <div style="font-size:0.75rem;color:gray"><%= o.user.email %></div>
+            <% } else { %>
+              Deleted user
+            <% } %>
+          </td>
+
+          <td><%= new Date(o.createdAt).toLocaleDateString() %></td>
+
+          <td><%= o.items?.length || 0 %></td>
+
+          <td><strong>$<%= Number(o.totalAmount || 0).toFixed(2) %></strong></td>
+
+          <td><span class="status-badge status-<%= o.status.toLowerCase() %>"><%= o.status %></span></td>
+
+          <td>
+            <a href="/admin/orders/<%= o._id %>">View</a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.status-seg').forEach(el => {
+  el.style.width = el.dataset.width + '%';
+});
+</script>
+
+<%- include('../partials/admin-footer') %>

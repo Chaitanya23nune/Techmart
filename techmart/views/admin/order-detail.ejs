@@ -1,0 +1,56 @@
+<%- include('../partials/admin-header') %>
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="admin-form-card mb-3">
+      <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+          <h5 style="font-family:'Syne',sans-serif;font-weight:700">Order #<%= order.orderId %></h5>
+          <div style="color:var(--text-muted);font-size:0.85rem"><%= new Date(order.createdAt).toLocaleString() %></div>
+        </div>
+        <span class="status-badge status-<%= order.status.toLowerCase() %>" style="padding:6px 16px;font-size:0.85rem"><%= order.status %></span>
+      </div>
+      <div class="form-section-title">Update Status</div>
+      <form method="POST" action="/admin/orders/<%= order._id %>/status" class="d-flex gap-2 mb-4">
+        <select name="status" class="form-select" style="max-width:200px">
+          <% ['Placed','Confirmed','Shipped','Delivered','Cancelled'].forEach(s => { %>
+          <option value="<%= s %>" <%= order.status===s?'selected':'' %>><%= s %></option>
+          <% }) %>
+        </select>
+        <button type="submit" class="checkout-btn" style="width:auto;padding:10px 24px;font-size:0.88rem">Update</button>
+      </form>
+      <div class="form-section-title">Items (<%= order.items.length %>)</div>
+      <% order.items.forEach(item => { %>
+      <div class="d-flex align-items-center gap-3 mb-3 pb-3" style="border-bottom:1px solid var(--border)">
+        <img
+  src="<%= p.image ? '/images/' + p.image : '/images/placeholder.png' %>" style="width:56px;height:56px;object-fit:contain;background:#f8f7ff;border-radius:8px;padding:4px">
+        <div class="flex-grow-1"><div style="font-weight:600;font-size:0.9rem"><%= item.name %></div><div style="color:var(--text-muted);font-size:0.8rem">Qty: <%= item.quantity %> × $<%= item.price.toFixed(2) %></div></div>
+        <div style="font-weight:700">$<%= (item.price*item.quantity).toFixed(2) %></div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="admin-form-card mb-3">
+      <div class="form-section-title">Customer</div>
+      <% if(order.user){%>
+      <div style="font-weight:600"><%= order.user.name %></div>
+      <div style="color:var(--text-muted);font-size:0.85rem"><%= order.user.email %></div>
+      <% }else{%><div style="color:var(--text-muted)">User deleted</div><%}%>
+    </div>
+    <div class="admin-form-card mb-3">
+      <div class="form-section-title">Delivery Address</div>
+      <p style="font-size:0.88rem;margin:0"><strong><%= order.address.name %></strong><br>
+        <span style="color:var(--text-muted)"><%= order.address.phone %><br>
+        <%= order.address.street %><br>
+        <%= order.address.city %>, <%= order.address.state %> <%= order.address.zip %></span>
+      </p>
+    </div>
+    <div class="admin-form-card">
+      <div class="form-section-title">Payment Summary</div>
+      <div class="summary-row"><span>Method</span><span><%= order.paymentMethod %></span></div>
+      <div class="summary-row"><span>Delivery</span><span><%= order.deliveryType %></span></div>
+      <div class="summary-row summary-total"><span>Total</span><span style="color:var(--primary)">$<%= order.totalAmount.toFixed(2) %></span></div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/admin-footer') %>

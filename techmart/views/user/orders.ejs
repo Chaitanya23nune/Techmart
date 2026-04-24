@@ -1,0 +1,26 @@
+<%- include('../partials/header') %>
+<div class="container-fluid px-4 py-3">
+  <h4 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:20px">My Orders</h4>
+  <% if (orders.length === 0) { %>
+  <div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No orders yet</div><p>Place your first order!</p><a href="/products" class="tm-btn-primary mt-3 d-inline-block">Shop Now</a></div>
+  <% } else { %>
+  <div class="admin-table-card">
+    <table class="table">
+      <thead><tr><th>Order ID</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        <% orders.forEach(o => { %>
+        <tr>
+          <td><strong style="color:var(--primary)">#<%= o.orderId %></strong></td>
+          <td style="color:var(--text-muted);font-size:0.85rem"><%= new Date(o.createdAt).toLocaleDateString() %></td>
+          <td><%= o.items.length %> item(s)</td>
+          <td><strong>$<%= o.totalAmount.toFixed(2) %></strong></td>
+          <td><span class="status-badge status-<%= o.status.toLowerCase() %>"><%= o.status %></span></td>
+          <td><a href="/orders/<%= o._id %>" class="btn-action btn-view"><i class="bi bi-eye"></i></a></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
+<%- include('../partials/footer') %>

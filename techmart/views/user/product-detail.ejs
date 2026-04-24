@@ -1,0 +1,75 @@
+<%- include('../partials/header') %>
+<div class="container-fluid px-4 py-3">
+  <nav aria-label="breadcrumb" class="breadcrumb-wrap"><ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/products?category=<%= product.category %>"><%= product.category %></a></li>
+    <li class="breadcrumb-item active"><%= product.name.substring(0,40) %>...</li>
+  </ol></nav>
+  <div class="row g-4 mb-5">
+    <div class="col-lg-5">
+      <div class="detail-img-wrap">
+        <img 
+  src="<%= product.image ? '/images/' + product.image : '/images/placeholder.png' %>" class="detail-img">
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <% if (product.isTopItem) { %><span class="product-badge top mb-2 d-inline-block">Top Item</span><% } %>
+      <h1 style="font-size:1.6rem;font-weight:700;font-family:'Syne',sans-serif;margin-bottom:8px"><%= product.name %></h1>
+      <div class="product-rating mb-3">
+        <span class="stars" style="font-size:1rem"><% for(let i=1;i<=5;i++){%><i class="bi bi-star<%= i<=Math.round(product.rating)?'-fill':'' %>"></i><%}%></span>
+        <span style="color:var(--text-muted);font-size:0.85rem"><%= product.rating.toFixed(1) %> (<%= product.reviewCount %> reviews)</span>
+      </div>
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <span class="detail-price">$<%= product.price.toFixed(2) %></span>
+        <% if (product.originalPrice > product.price) { %>
+        <span class="detail-original">$<%= product.originalPrice.toFixed(2) %></span>
+        <span class="product-discount">-<%= Math.round((1-product.price/product.originalPrice)*100) %>% OFF</span>
+        <% } %>
+      </div>
+      <p style="color:var(--text-muted);font-size:0.92rem;line-height:1.7;margin-bottom:20px"><%= product.description %></p>
+      <div class="d-flex gap-3 mb-3" style="font-size:0.88rem">
+        <div><strong>Brand:</strong> <%= product.brand %></div>
+        <div><strong>Category:</strong> <%= product.category %></div>
+        <div><strong>Stock:</strong> <span class="<%= product.stock > 0 ? 'text-success' : 'text-danger' %>"><%= product.stock > 0 ? product.stock + ' units' : 'Out of Stock' %></span></div>
+      </div>
+      <% if (product.stock > 0) { %>
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="qty-input-group">
+          <button type="button" onclick="changeQty(-1)">−</button>
+          <input type="number" id="qtyInput" value="1" min="1" max="<%= product.stock %>">
+          <button type="button" onclick="changeQty(1)">+</button>
+        </div>
+        <button class="add-cart-btn" data-add-cart="<%= product._id %>" style="width:auto;padding:12px 28px">
+          <i class="bi bi-bag-plus me-2"></i>Add to Cart
+        </button>
+      </div>
+      <% } else { %>
+      <button class="add-cart-btn" disabled style="opacity:0.5;cursor:not-allowed">Out of Stock</button>
+      <% } %>
+      <div class="d-flex gap-3 mt-2" style="font-size:0.85rem;color:var(--text-muted)">
+        <span><i class="bi bi-truck me-1"></i>Free Standard Delivery</span>
+        <span><i class="bi bi-arrow-repeat me-1"></i>30-day Returns</span>
+        <span><i class="bi bi-shield-check me-1"></i>1 Year Warranty</span>
+      </div>
+    </div>
+  </div>
+  <% if (related.length > 0) { %>
+  <div class="section-header"><h2 class="section-title">Related Products</h2></div>
+  <div class="row g-3">
+    <% related.forEach(p => { %>
+    <div class="col-6 col-md-3">
+      <div class="product-card">
+        <div class="product-img-wrap"><a href="/products/<%= p._id %>"><img 
+  src="<%= p.image ? '/images/' + p.image : '/images/placeholder.png' %>" class="detail-img"></a></div>
+        <div class="product-info">
+          <a href="/products/<%= p._id %>" style="text-decoration:none"><div class="product-name"><%= p.name %></div></a>
+          <div class="product-price-row"><span class="product-price">$<%= p.price.toFixed(2) %></span></div>
+          <button class="add-cart-btn" data-add-cart="<%= p._id %>"><i class="bi bi-bag-plus me-1"></i>Add to Cart</button>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } %>
+</div>
+<%- include('../partials/footer') %>
