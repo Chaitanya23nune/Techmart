@@ -87,8 +87,10 @@
           <button class="wish-btn"><i class="bi bi-heart"></i></button>
           <a href="/products/<%= p._id %>">
             <img
-  src="<%= p.image ? '/images/' + p.image : '/images/placeholder.png' %>"
-alt="<%= p.name %>" loading="lazy" onerror="this.src='/images/placeholder.svg'">
+  src="<%= p.image ? '/' + p.image : '/images/placeholder.png' %>"
+  alt="<%= p.name %>"
+  loading="lazy"
+  onerror="this.src='/images/placeholder.png'">
           </a>
         </div>
         <div class="product-info">
@@ -130,7 +132,8 @@ alt="<%= p.name %>" loading="lazy" onerror="this.src='/images/placeholder.svg'">
           <button class="wish-btn"><i class="bi bi-heart"></i></button>
           <a href="/products/<%= p._id %>">
             <img
-  src="<%= p.image ? '/images/' + p.image : '/images/placeholder.png' %>"
+  src="<%= p.image ? '/' + p.image : '/images/placeholder.png' %>"
+  onerror="this.src='/images/placeholder.png'"
 >
           </a>
         </div>
