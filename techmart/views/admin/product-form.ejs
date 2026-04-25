@@ -41,10 +41,10 @@
 
     <input type="file" name="image" class="form-control">
 
-    <% if (product && product.image) { %>
+    <% if (product && p.image) { %>
       <div class="mt-2">
         <img
-          src="<%= product.image %>"
+          src="<%= p.image %>"
           id="imgPreview"
           style="max-height:120px;border-radius:8px;object-fit:contain;background:#f8f7ff;padding:8px"
         >
