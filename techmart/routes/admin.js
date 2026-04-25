@@ -5,7 +5,7 @@ const Order = require('../models/Order');
 const User = require('../models/User');
 const multer = require("multer");
 const path = require("path");
-
+const { isAdmin } = require('../middleware/auth');
 const cloudinary = require("../config/cloudinary");
 
 const storage = multer.diskStorage({
