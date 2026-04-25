@@ -8,8 +8,11 @@
   <div class="row g-4 mb-5">
     <div class="col-lg-5">
       <div class="detail-img-wrap">
-        <img 
-  src="<%= product.image ? '/images/' + product.image : '/images/placeholder.png' %>" class="detail-img">
+        <img
+  src="<%= product.image || '/images/placeholder.png' %>"
+  alt="<%= product.name %>"
+  onerror="this.src='/images/placeholder.png'" class="detail-img"
+>
       </div>
     </div>
     <div class="col-lg-7">

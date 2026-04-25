@@ -83,8 +83,10 @@
               <% if (p.isTopItem) { %><span class="product-badge top">Top Item</span><% } %>
               <button class="wish-btn"><i class="bi bi-heart"></i></button>
               <a href="/products/<%= p._id %>">
-            <img 
-  src="<%= p.image ? '/images/' + p.image : '/images/placeholder.png' %>"
+            <img
+  src="<%= product.image || '/images/placeholder.png' %>"
+  alt="<%= product.name %>"
+  onerror="this.src='/images/placeholder.png'"
 >
             </div>
             <div class="product-info">

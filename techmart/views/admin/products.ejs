@@ -34,8 +34,10 @@
         <% } %>
         <% products.forEach(p => { %>
         <tr>
-          <td><img 
-  src="<%= p.image ? '/images/' + p.image : '/images/placeholder.png' %>"
+          <td><img
+  src="<%= product.image || '/images/placeholder.png' %>"
+  width="60"
+  onerror="this.src='/images/placeholder.png'"
   style="width:60px; height:60px; object-fit:cover; border-radius:6px;"
 ></td>
           <td><div style="font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><%= p.name %></div><div style="font-size:0.75rem;color:var(--text-muted)"><%= p.brand %></div></td>

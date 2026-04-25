@@ -131,10 +131,10 @@
           <button class="wish-btn"><i class="bi bi-heart"></i></button>
           <a href="/products/<%= p._id %>">
             <img
-  src="<%= p.image ? p.image : '/images/placeholder.png' %>"
-  alt="<%= p.name %>"
-  loading="lazy"
-  onerror="this.src='/images/placeholder.png'">
+  src="<%= product.image || '/images/placeholder.png' %>"
+  alt="<%= product.name %>"
+  onerror="this.src='/images/placeholder.png'"
+>
           </a>
         </div>
         <div class="product-info">
