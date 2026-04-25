@@ -130,14 +130,12 @@
         <div class="product-img-wrap">
           <button class="wish-btn"><i class="bi bi-heart"></i></button>
           <a href="/products/<%= p._id %>">
-            <a href="/products/<%= p._id %>">
   <img
     src="<%= p.image || '/images/placeholder.png' %>"
     alt="<%= p.name %>"
     onerror="this.src='/images/placeholder.png'"
   >
 </a>
-          </a>
         </div>
         <div class="product-info">
           <a href="/products/<%= p._id %>" style="text-decoration:none"><div class="product-name"><%= p.name %></div></a>
