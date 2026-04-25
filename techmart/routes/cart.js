@@ -14,11 +14,22 @@ router.get('/', isAuth, (req, res) => {
 router.post('/add', isAuth, async (req, res) => {
   try {
     const { productId, quantity = 1 } = req.body;
-    const product = await Product.findById(productId);
-    if (!product) return res.json({ success: false, message: 'Product not found' });
 
-    if (!req.session.cart) req.session.cart = [];
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    if (!req.session.cart) {
+      req.session.cart = [];
+    }
+
     const cart = req.session.cart;
+
     const existing = cart.find(i => i.productId === productId);
 
     if (existing) {
@@ -28,15 +39,26 @@ router.post('/add', isAuth, async (req, res) => {
         productId,
         name: product.name,
         price: product.price,
-        image: p.image,
+        image: product.image, // FIXED
         quantity: parseInt(quantity)
       });
     }
 
     const cartCount = cart.reduce((a, i) => a + i.quantity, 0);
-    res.json({ success: true, cartCount, message: 'Added to cart' });
+
+    res.json({
+      success: true,
+      cartCount,
+      message: 'Added to cart'
+    });
+
   } catch (err) {
-    res.json({ success: false, message: 'Error adding to cart' });
+    console.log(err);
+
+    res.json({
+      success: false,
+      message: 'Error adding to cart'
+    });
   }
 });
 

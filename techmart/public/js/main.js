@@ -29,7 +29,9 @@ function showToast(message, type = 'success') {
 document.addEventListener('click', async function(e) {
   const btn = e.target.closest('[data-add-cart]');
   if (!btn) return;
+
   e.preventDefault();
+
   const productId = btn.dataset.addCart;
   const qtyEl = document.getElementById('qtyInput');
   const qty = qtyEl ? parseInt(qtyEl.value) : 1;
@@ -41,43 +43,61 @@ document.addEventListener('click', async function(e) {
   try {
     const res = await fetch('/cart/add', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId, quantity: qty })
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        productId,
+        quantity: qty
+      })
     });
+
+    // IMPORTANT FIX
+    const contentType = res.headers.get("content-type");
+
+    if (!contentType || !contentType.includes("application/json")) {
+      window.location.reload();
+      return;
+    }
+
     const data = await res.json();
 
     if (data.success) {
       showToast('Added to cart!', 'success');
-      // Animate cart badge
+
       document.querySelectorAll('.cart-badge').forEach(el => {
-        el.textContent = data.cartCount;
+        el.textContent = data.cartCount || 1;
         el.style.display = 'flex';
-        el.style.animation = 'none';
-        el.offsetHeight; // reflow
-        el.style.animation = 'pulse 0.4s ease';
       });
-      // Button feedback
+
       btn.innerHTML = '<i class="bi bi-check-lg me-1"></i>Added!';
       btn.style.background = '#16a34a';
+
       setTimeout(() => {
         btn.innerHTML = originalHTML;
         btn.style.background = '';
         btn.disabled = false;
       }, 1500);
+
       return;
-    } else if (res.status === 401 || (data.message && data.message.toLowerCase().includes('login'))) {
+    }
+
+    if (res.status === 401) {
       window.location.href = '/auth/login';
       return;
-    } else {
-      showToast(data.message || 'Could not add to cart', 'error');
     }
-  } catch {
-    showToast('Network error. Please try again.', 'error');
+
+    showToast(data.message || 'Could not add to cart', 'error');
+
+  } catch (err) {
+    console.log(err);
+    showToast('Error adding to cart', 'error');
   }
+
   btn.disabled = false;
   btn.innerHTML = originalHTML;
 });
-
 // ── Qty Input Controls ─────────────────────────
 function changeQty(delta) {
   const input = document.getElementById('qtyInput');
