@@ -138,61 +138,54 @@ recentOrders = recentOrders || [];
 
   <!-- Low Stock -->
   <div class="col-lg-5">
-    <div class="chart-card h-100">
-      <div class="chart-title">
-        <i class="bi bi-exclamation-triangle-fill me-2" style="color:#d97706"></i>
-        Low Stock Alert
-      </div>
+  <div class="chart-card h-100">
+    <div class="chart-title">
+      <i class="bi bi-exclamation-triangle-fill me-2" style="color:#d97706"></i>
+      Low Stock Alert
+    </div>
 
-      <% if (lowStock.length === 0) { %>
+    <% if (lowStock && lowStock.length > 0) { %>
+
+      <% lowStock.forEach(product => { %>
+        <div class="d-flex align-items-center gap-3 mb-3">
+
+          <img 
+            src="<%= product?.image || '/images/placeholder.png' %>" 
+            style="width:40px;height:40px;object-fit:contain;border-radius:6px"
+          >
+
+          <div class="flex-grow-1" style="min-width:0">
+            <div style="font-size:0.83rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+              <%= product?.name || 'No Name' %>
+            </div>
+
+            <div style="font-size:0.75rem;color:var(--text-muted)">
+              <%= product?.category || '' %>
+            </div>
+          </div>
+
+          <span class="stock-low">
+            <%= product?.stock || 0 %> left
+          </span>
+
+        </div>
+      <% }) %>
+
+    <% } else { %>
+
       <div class="text-center py-4">
         <div style="font-size:2rem;margin-bottom:8px">✅</div>
         <div style="font-size:0.88rem;color:var(--text-muted)">
           All products well-stocked
         </div>
       </div>
-      <% } else { %>
 
-      <% if (lowStock && lowStock.length) { %>
-  <% lowStock.forEach(product => { %>
+    <% } %>
 
-    <div class="d-flex align-items-center gap-3 mb-3">
+    <a href="/admin/products" class="section-link" style="font-size:0.82rem">
+      View All Products →
+    </a>
 
-      <img 
-        src="<%= product && product.image ? product.image : '/images/placeholder.png' %>" 
-        style="width:40px;height:40px;object-fit:contain;border-radius:6px"
-      >
-
-      <div>
-        <div><%= product && product.name ? product.name : 'No Name' %></div>
-      </div>
-
-    </div>
-
-  <% }) %>
-<% } else { %>
-  <p>No low stock items</p>
-<% } %>
-
-        <div class="flex-grow-1" style="min-width:0">
-          <div style="font-size:0.83rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-            <%= p.name %>
-          </div>
-          <div style="font-size:0.75rem;color:var(--text-muted)">
-            <%= p.category %>
-          </div>
-        </div>
-
-        <span class="stock-low"><%= p.stock || 0 %> left</span>
-      </div>
-      <% }) %>
-
-      <a href="/admin/products" class="section-link" style="font-size:0.82rem">
-        View All Products →
-      </a>
-
-      <% } %>
-    </div>
   </div>
 </div>
 
