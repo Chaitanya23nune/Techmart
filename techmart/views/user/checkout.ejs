@@ -42,11 +42,10 @@
         <h6 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px">Order Summary</h6>
         <% cart.forEach(item => { %>
         <div class="d-flex align-items-center gap-3 mb-3">
-          <%= item.image %>
           <img 
-          src="<%= item.image ? '/uploads/' + item.image : '/images/placeholder.png' %>"
+  src="<%= item.image %>" 
   style="width:48px;height:48px;object-fit:contain;background:#f8f7ff;border-radius:8px;padding:4px"
->
+/>
           <div class="flex-grow-1"><div style="font-size:0.85rem;font-weight:600"><%= item.name.substring(0,30) %>...</div><div style="font-size:0.78rem;color:var(--text-muted)">x<%= item.quantity %></div></div>
           <div style="font-weight:700;font-size:0.9rem">$<%= (item.price*item.quantity).toFixed(2) %></div>
         </div>
