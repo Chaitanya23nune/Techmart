@@ -42,6 +42,7 @@
         <h6 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px">Order Summary</h6>
         <% cart.forEach(item => { %>
         <div class="d-flex align-items-center gap-3 mb-3">
+          <%= item.image %>
           <img 
   src="<%= item.image ? '/images/' + item.image : '/images/placeholder.png' %>"
   style="width:48px;height:48px;object-fit:contain;background:#f8f7ff;border-radius:8px;padding:4px"
