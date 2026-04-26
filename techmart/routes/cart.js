@@ -39,8 +39,8 @@ router.post('/add', isAuth, async (req, res) => {
         productId,
         name: product.name,
         price: product.price,
-        image: product.image, // FIXED
-        quantity: parseInt(quantity)
+        quantity: parseInt(quantity),
+        image: product.image
       });
     }
 
