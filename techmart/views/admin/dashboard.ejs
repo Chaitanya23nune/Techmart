@@ -155,10 +155,20 @@ recentOrders = recentOrders || [];
 
       <% if (lowStock && lowStock.length) { %>
   <% lowStock.forEach(product => { %>
-    <div>
-      <img src="<%= product?.image || '/images/placeholder.png' %>">
-      <span><%= product?.name || 'No Name' %></span>
+
+    <div class="d-flex align-items-center gap-3 mb-3">
+
+      <img 
+        src="<%= product && product.image ? product.image : '/images/placeholder.png' %>" 
+        style="width:40px;height:40px;object-fit:contain;border-radius:6px"
+      >
+
+      <div>
+        <div><%= product && product.name ? product.name : 'No Name' %></div>
+      </div>
+
     </div>
+
   <% }) %>
 <% } else { %>
   <p>No low stock items</p>
